@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Listar</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <!-- place navbar here -->
+      <nav class="nav justify-content-center">
+        <a class="nav-link active" href="#" aria-current="page">Active link</a>
+        <a class="nav-link" href="#">Link</a>
+        <a class="nav-link disabled" href="#">Disabled link</a>
+      </nav>
+    </header>
+    <main>
+      <h1>Lista de Cursos</h1>
+      <div class="table-responsive">
+        <table class="table table-primary">
+          <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Descripcion</th>
+              <th scope="col">Usuario</th>
+            </tr>
+          </thead>
+          <tbody id="tablademuestradedatos">
+            <tr class="">
+              <td scope="row">R1C1</td>
+              <td>R1C2</td>
+              <td>R1C3</td>
+              <td>R1C3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Botón para insertar un curso -->
+      <div class="text-center mt-3">
+        <button id="insertarCursoBtn" class="btn btn-success">Agregar Curso</button>
+      </div>
+    
+    
+    </main>
+
+
+    <footer>
+      <!-- place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      $(document).ready(function () {
+        listardatos();
+
+        function listardatos() {
+          $.ajax({
+            type: "POST",
+            url: "https://paginas-web-cr.com/Api/apis/ListaCurso.php",
+            dataType: "json",
+            success: function (response) {
+              cargadatos(response.data);
+            },
+            error: function (error) {
+              alert("Error al cargar los datos");
+            },
+          });
+        }
+
+        function cargadatos(objeto) {
+          const $tablademuestradedatos = $("#tablademuestradedatos");
+
+          $tablademuestradedatos.empty();
+
+          objeto.forEach((elementosdelarrglo) => {
+            let filadeDatos = `<tr class="">
+                                <td scope="row">${elementosdelarrglo.id}</td>
+                                <td>${elementosdelarrglo.nombre}</td>
+                                <td>${elementosdelarrglo.descripcion}</td>
+                                <td>${elementosdelarrglo.usuario}</td><
+                            /tr>`;
+
+            $tablademuestradedatos.append(filadeDatos);
+          });
+          // tablademuestradedatos
+          //   tablademuestradedatos
+          //"id":"5038","nombre":"1","descripcion":"2","tiempo":"3","usuario":"4"
+        }
+
+
+
+
+
+
+
+      });
+    </script>
+
+    <script>
+    // Función para insertar nuevos datos (POST)
+        function insertardatos() {
+          // Datos que vamos a enviar
+          const cursoData = {
+            nombre: "React 22",
+            descripcion: "React Junior",
+            tiempo: "10 Meses",
+            usuario: "profesor Mario"
+          };
+
+          $.ajax({
+            type: "POST",
+            url: "https://paginas-web-cr.com/Api/apis/InsertarCursos.php",
+            data: JSON.stringify(cursoData),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+              alert("Curso insertado con éxito");
+              listardatos(); // Recargar la lista de cursos después de insertar
+            },
+            error: function (error) {
+              alert("Error al insertar los datos");
+            },
+          });
+        }
+
+        // Llamada inicial para cargar los datos al cargar la página
+        listardatos();
+
+        // Asociamos el evento del botón de insertar
+        $("#insertarCursoBtn").click(function() {
+          insertardatos();
+        });
+  </script>
+
+  </body>
+</html>
+
+<!--
+POST
+
+https://paginas-web-cr.com/Api/apis/ListaCurso.php
+
+
+apis/InsertarCursos.php
+
+    { "nombre":"React 22", "descripcion":"React Junior", "tiempo":"10 Meses", "usuario":"profesor Mario" }
+
+
+
+    apis/ActualizarCursos.php
+
+    { "id":3, "nombre":"React 22", "descripcion":"React Junior", "tiempo":"10 Meses", "usuario":"profesor Mario" }
+
+
+    apis/BorrarCursos.php
+
+    { "id":2 } -->
