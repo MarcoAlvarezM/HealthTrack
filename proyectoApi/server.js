@@ -17,6 +17,9 @@ const PORT = process.env.PORT || 3000;
 
 // Routes CRUD para usuarios
 app.use("/api/usuarios", require("./routes/usuarioRoutes"));
+app.use("/api/pacientes", require("./routes/pacientesRoutes"));
+app.use("/api/medicamentos", require("./routes/medicamentosRoutes"));
+app.use("/api/tratamientos", require("./routes/tratamientosRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutadonse ${PORT}`);
