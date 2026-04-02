@@ -15,8 +15,8 @@ mongoose
 
 const PORT = process.env.PORT || 3000;
 
-//Routes CRUD
-
+// Routes CRUD para usuarios
+app.use("/api/usuarios", require("./routes/usuarioRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutadonse ${PORT}`);
