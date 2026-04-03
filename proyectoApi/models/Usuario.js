@@ -8,4 +8,4 @@ const usuarioSchema = new mongoose.Schema({
   activo: { type: Boolean, default: true }
 });
 
-module.exports = mongoose.model('Usuario', usuarioSchema);
+module.exports = mongoose.model('Usuario', usuarioSchema, 'Usuarios');
