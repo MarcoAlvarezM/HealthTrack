@@ -23,6 +23,9 @@ app.use("/api/pacientes", require("./routes/pacientesRoutes.js"));
 app.use("/api/medicamentos", require("./routes/medicamentosRoutes.js"));
 app.use("/api/tratamientos", require("./routes/tratamientosRoutes"));
 
+app.use("/api/reportes-diarios", require("./routes/reportesDiariosRoutes"));
+app.use("/api/reglas-alertas", require("./routes/reglasAlertasRoutes"));
+app.use("/api/Registros", require("./routes/RegistrosRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutadonse ${PORT}`);
