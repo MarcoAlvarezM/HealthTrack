@@ -5,8 +5,14 @@ const Pacientes = require("../models/pacientes");
 
 // Obtener todos
 router.get("/", async (req, res) => {
-  const pacientes = await Pacientes.find();
-  res.json(pacientes);
+  try {
+    const pacientes = await Pacientes.find()
+      .populate('usuario_id', 'correo role');
+
+    res.json(pacientes);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener pacientes" });
+  }
 });
 
 // Crear

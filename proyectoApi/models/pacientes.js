@@ -7,7 +7,8 @@ const PacienteSchema = new mongoose.Schema({
   },
 
   usuario_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Usuario',
     required: true
   },
 
@@ -54,4 +55,4 @@ const PacienteSchema = new mongoose.Schema({
   ]
 });
 
-module.exports = mongoose.model("Pacientes", PacienteSchema);
+module.exports = mongoose.model("Pacientes", PacienteSchema, 'Pacientes');

@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Importar el modelo Doctor
 const Doctor = require('../models/Doctor');
+const Usuario = require('../models/Usuario');
 
 // GET: Obtener todos los doctores
 router.get("/", async (req, res) => {
@@ -33,13 +34,38 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST: Crear un nuevo doctor
+
 router.post("/", async (req, res) => {
   try {
+    const { usuario_id } = req.body;
+
+    // Verificar que el usuario existe
+    const usuario = await Usuario.findById(usuario_id);
+
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no existe" });
+    }
+
+    // Verificar que sea rol Doctor
+    if (usuario.role !== "Doctor") {
+      return res.status(400).json({ error: "El usuario no tiene rol Doctor" });
+    }
+
+    // Evitar duplicados (1 usuario = 1 doctor)
+    const existeDoctor = await Doctor.findOne({ usuario_id });
+
+    if (existeDoctor) {
+      return res.status(400).json({ error: "Este usuario ya tiene un perfil de doctor" });
+    }
+
     const nuevoDoctor = new Doctor(req.body);
     const doctorGuardado = await nuevoDoctor.save();
+
     res.json(doctorGuardado);
+
   } catch (error) {
-    res.status(400).json({ error: "Error al crear el doctor" });
+    console.error(error);
+    res.status(400).json({ error: error.message });
   }
 });
 

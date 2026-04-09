@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios</title>
+  <link href="./css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="container mt-4">
+
+  <h1>Gestión de Usuarios</h1>
+
+  <!-- FORMULARIO -->
+  <form id="formulario">
+    <input type="hidden" id="id">
+
+    <div class="mb-3">
+      <label>Correo</label>
+      <input type="email" id="correo" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Contraseña</label>
+      <input type="password" id="contrasena" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Rol</label>
+      <select id="role" class="form-control">
+        <option value="Paciente">Paciente</option>
+        <option value="Doctor">Doctor</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary">Guardar</button>
+  </form>
+
+  <!-- TABLA -->
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+
+  <script type="module" src="usuarios.js"></script>
+</body>
+</html>
