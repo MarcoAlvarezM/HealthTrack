@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   try {
     const consultas = await Consulta.find()
       .populate('paciente_id')
-      .populate('doctor_id'); // Opcional: trae info relacionada
+      .populate('doctor_id'); 
 
     res.json(consultas);
   } catch (error) {

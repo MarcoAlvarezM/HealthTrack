@@ -26,6 +26,9 @@ app.use("/api/tratamientos", require("./routes/tratamientosRoutes"));
 app.use("/api/reportes-diarios", require("./routes/reportesDiariosRoutes"));
 app.use("/api/reglas-alertas", require("./routes/reglasAlertasRoutes"));
 app.use("/api/Registros", require("./routes/RegistrosRoutes"));
+app.use("/api/notificaciones", require("./routes/notificacionRoutes"));
+app.use("/api/catalogosintomas", require("./routes/catalogosintomasRoutes"));
+app.use("/api/alertas", require("./routes/alertasRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Servidor ejecutadonse ${PORT}`);
