@@ -4,32 +4,52 @@
   <meta charset="UTF-8">
   <title>Sistema Médico</title>
   <link href="./css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f5f7fa;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      transition: 0.3s;
+    }
+  </style>
 </head>
 
 <body class="container mt-4">
 
-  <h1 class="text-center">Sistema de Gestión</h1>
+  <!-- TÍTULO -->
+  <h1 class="text-center">Sistema de Gestión Médico</h1>
+  <p class="text-center text-muted">Panel principal</p>
 
-  <!-- NAV -->
-  <div class="d-flex justify-content-center gap-3 mt-4">
-    <a href="usuarios.html" class="btn btn-primary">Usuarios</a>
-    <a href="pacientes.html" class="btn btn-success">Pacientes</a>
-    <a href="doctores.html" class="btn btn-warning">Doctores</a>
+  <!-- MÓDULOS -->
+  <div class="row mt-5">
+
+    <!-- USUARIOS -->
+    <div class="col-md-4">
+      <div class="card text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <p class="card-text">Administrar usuarios del sistema</p>
+          <a href="usuarios.html" class="btn btn-primary">Ingresar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACIENTES -->
+    <div class="col-md-4">
+      <div class="card text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">Pacientes</h5>
+          <p class="card-text">Gestión de pacientes</p>
+          <a href="Pacientes/pacientes.html" class="btn btn-success">Ingresar</a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- TABLA GENERAL -->
-  <h2 class="mt-5">Resumen de Usuarios</h2>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Correo</th>
-        <th>Rol</th>
-      </tr>
-    </thead>
-    <tbody id="tablaUsuarios"></tbody>
-  </table>
-
+  <!-- SCRIPT -->
   <script type="module">
     import { getData } from "./js/app.js";
 
