@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const TratamientoSchema = new mongoose.Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
 
   consulta_id: {
     type: Number,

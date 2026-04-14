@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const MedicamentoSchema = new mongoose.Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
-
   nombre: {
     type: String,
     required: true
