@@ -65,7 +65,7 @@ $(document).ready(function () {
 
           tabla.append(`
             <tr>
-              <td>${c.paciente_id}</td>
+              <td>${c.paciente_id ? c.paciente_id.nombre + " " + c.paciente_id.apellido : "N/A"}</td>
               <td>${c.doctor_id ? c.doctor_id.nombre : "N/A"}</td>
               <td>${fecha}</td>
               <td>${estadoBadge}</td>

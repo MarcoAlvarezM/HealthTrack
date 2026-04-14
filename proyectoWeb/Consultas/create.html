@@ -81,7 +81,7 @@ $(document).ready(function () {
     e.preventDefault();
 
     let datos = {
-      paciente_id: parseInt($("#paciente_id").val()),
+      paciente_id: $("#paciente_id").val(),
       doctor_id: $("#doctor_id").val(),
       fecha: $("#fecha").val(),
       diagnostico: $("#diagnostico").val(),
@@ -94,7 +94,7 @@ $(document).ready(function () {
       type: "POST",
       data: JSON.stringify(datos),
        contentType: "application/json",
-      success: function () {
+      success: function (response) {
          console.log(response);
         alert("Consulta creada");
         $("#formConsulta")[0].reset();
