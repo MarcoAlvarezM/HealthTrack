@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const PacienteSchema = new mongoose.Schema({
-  _id: {
-    type: Number,
-    required: true
-  },
-
   usuario_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario',

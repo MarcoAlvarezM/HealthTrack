@@ -110,6 +110,7 @@ $(document).ready(function () {
       data: JSON.stringify(datos),
       contentType: "application/json",
       success: function () {
+         console.log(response);
         alert("Doctor guardado");
         $("#formDoctor")[0].reset();
         $("#horarios").empty();

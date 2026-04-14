@@ -89,12 +89,13 @@ $(document).ready(function () {
       estado: $("#estado").val()
     };
 
-    $.ajax({
+ $.ajax({
       url: "http://localhost:3000/api/consultas",
       type: "POST",
       data: JSON.stringify(datos),
-      contentType: "application/json",
+       contentType: "application/json",
       success: function () {
+         console.log(response);
         alert("Consulta creada");
         $("#formConsulta")[0].reset();
       }
