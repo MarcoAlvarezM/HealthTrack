@@ -50,12 +50,15 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await CatalogoSintomas.findByIdAndUpdate(req.params.id, {
-      activo: false
-    });
-    res.json({ mensaje: "Síntoma desactivado" });
+    const eliminado = await CatalogoSintomas.findByIdAndDelete(req.params.id);
+
+    if (!eliminado) {
+      return res.status(404).json({ mensaje: "Síntoma no encontrado" });
+    }
+
+    res.json({ mensaje: "Síntoma eliminado correctamente", eliminado });
   } catch (error) {
-    res.status(400).json({ mensaje: "Error al eliminar síntoma" });
+    res.status(400).json({ mensaje: "Error al eliminar síntoma", error });
   }
 });
 
