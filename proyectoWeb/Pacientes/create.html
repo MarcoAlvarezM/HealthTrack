@@ -78,47 +78,71 @@
   </form>
 
   <script>
-    $(document).ready(function () {
+  $(document).ready(function () {
 
-      $("#formPaciente").submit(function (e) {
-        e.preventDefault();
+    // Cargar usuarios en el select
+    $.ajax({
+      type: "GET",
+      url: "http://localhost:3000/api/usuarios",
+      success: function (usuarios) {
+        let select = $("#usuario_id");
+        select.append('<option value="">Seleccione un usuario</option>');
 
-        let datos = {
-          _id: parseInt($("#id").val()),
-          usuario_id: $("#usuario_id").val(),
-          nombre: $("#nombre").val(),
-          apellido: $("#apellido").val(),
-          fechaNacimiento: $("#fechaNacimiento").val(),
-          genero: $("#genero").val(),
-          peso: parseFloat($("#peso").val()),
-          altura: parseFloat($("#altura").val()),
-          tipoSangre: $("#tipoSangre").val(),
-          padecimientos: $("#padecimientos").val().split(",")
-        };
-
-        
-        if (!datos.nombre || !datos.apellido) {
-          alert("Faltan datos");
-          return;
-        }
-
-                $.ajax({
-            type: "POST",
-            url: "http://localhost:3000/api/pacientes",
-            data: JSON.stringify(objetodatos),
-            dataType: "json",
-            success: function (response) {
-              console.log(response);
-              alert("almcenando datos");
-            },
-            error: function (error) {
-              alert("Error al guardar los datos");
-            },
-          });
+        usuarios.forEach(function (usuario) {
+          select.append(
+                `<option value="${usuario._id}">${usuario.correo}</option>`
+          );
         });
-
+      },
+      error: function () {
+        alert("Error al cargar usuarios");
+      }
     });
-  </script>
+
+    // Envio del formulario
+    $("#formPaciente").submit(function (e) {
+      e.preventDefault();
+
+      let datos = {
+        _id: parseInt($("#id").val()),
+        usuario_id: $("#usuario_id").val(),
+        nombre: $("#nombre").val(),
+        apellido: $("#apellido").val(),
+        fechaNacimiento: $("#fechaNacimiento").val(),
+        genero: $("#genero").val(),
+        peso: parseFloat($("#peso").val()),
+        altura: parseFloat($("#altura").val()),
+        tipoSangre: $("#tipoSangre").val(),
+        padecimientos: $("#padecimientos").val().split(",")
+      };
+
+      // Validacion
+      if (!datos.nombre || !datos.apellido || !datos.usuario_id) {
+        alert("Faltan datos");
+        return;
+      }
+
+      // Enviar datos al backend
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:3000/api/pacientes",
+        data: JSON.stringify(datos), 
+        contentType: "application/json", 
+        dataType: "json",
+        success: function (response) {
+          console.log(response);
+          alert("Datos guardados correctamente");
+          $("#formPaciente")[0].reset();
+        },
+        error: function (error) {
+          console.error(error);
+          alert("Error al guardar los datos");
+        }
+      });
+    });
+
+  });
+</script>
 
 </body>
 </html>
