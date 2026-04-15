@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Síntoma</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body class="container mt-4">
+
+<h1 class="text-center">Editar Síntoma</h1>
+
+<form id="formSintoma">
+
+<div class="row">
+
+  <div class="col-md-6 mb-3">
+    <label>ID</label>
+    <input type="number" id="id_" class="form-control" disabled>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Nombre (interno)</label>
+    <input type="text" id="nombre" class="form-control">
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Etiqueta</label>
+    <input type="text" id="etiqueta" class="form-control">
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Tipo</label>
+    <select id="tipo" class="form-control">
+      <option value="escala">Escala</option>
+      <option value="booleano">Booleano</option>
+      <option value="texto">Texto</option>
+    </select>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Escala mínima</label>
+    <input type="number" id="min" class="form-control">
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Escala máxima</label>
+    <input type="number" id="max" class="form-control">
+  </div>
+
+  <div class="col-md-12 mb-3">
+    <label>Condiciones relacionadas (coma)</label>
+    <input type="text" id="condiciones" class="form-control">
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Umbral alerta</label>
+    <input type="number" id="umbral" class="form-control">
+  </div>
+
+</div>
+
+<button class="btn btn-primary">Actualizar</button>
+<a href="catalogo-sintomas.html" class="btn btn-secondary">Cancelar</a>
+
+</form>
+
+<script>
+$(document).ready(function () {
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    alert("ID no proporcionado");
+    window.location.href = "catalogo-sintomas.html";
+    return;
+  }
+
+  // 🔥 Cargar síntoma
+  $.get("http://localhost:3000/api/CatalogoSintomas/" + id, function (s) {
+
+    $("#id_").val(s.id_);
+    $("#nombre").val(s.nombre);
+    $("#etiqueta").val(s.etiqueta);
+    $("#tipo").val(s.tipo);
+
+    $("#min").val(s.escalaMinima);
+    $("#max").val(s.escalaMaxima);
+
+    $("#condiciones").val(s.condicionesRelacionadas.join(","));
+    $("#umbral").val(s.umbralAlerta);
+
+  }).fail(function () {
+    alert("Error al cargar síntoma");
+  });
+
+  // 🔥 Actualizar
+  $("#formSintoma").submit(function(e){
+    e.preventDefault();
+
+    let tipo = $("#tipo").val();
+
+    let datos = {};
+
+    let nombre = $("#nombre").val();
+    let etiqueta = $("#etiqueta").val();
+    let condiciones = $("#condiciones").val();
+    let umbral = $("#umbral").val();
+
+    if (nombre) datos.nombre = nombre;
+    if (etiqueta) datos.etiqueta = etiqueta;
+    if (tipo) datos.tipo = tipo;
+
+    if (condiciones) {
+      datos.condicionesRelacionadas = condiciones.split(",");
+    }
+
+    if (umbral) {
+      datos.umbralAlerta = parseInt(umbral);
+    }
+
+    if (tipo === "escala") {
+      datos.escalaMinima = parseInt($("#min").val());
+      datos.escalaMaxima = parseInt($("#max").val());
+    }
+
+    if (Object.keys(datos).length === 0) {
+      alert("No hay cambios");
+      return;
+    }
+
+    $.ajax({
+      url: "http://localhost:3000/api/CatalogoSintomas/" + id,
+      type: "PUT",
+      data: JSON.stringify(datos),
+      contentType: "application/json",
+      success: function(){
+        alert("Síntoma actualizado");
+        window.location.href = "catalogo-sintomas.html";
+      },
+      error: function(){
+        alert("Error al actualizar");
+      }
+    });
+
+  });
+
+});
+</script>
+
+</body>
+</html>

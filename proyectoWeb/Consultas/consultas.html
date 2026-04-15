@@ -71,10 +71,8 @@ $(document).ready(function () {
               <td>${estadoBadge}</td>
               <td>${c.diagnostico}</td>
               <td>
-                <button class="btn btn-danger btn-sm"
-                  onclick="eliminar('${c._id}')">
-                  Eliminar
-                </button>
+                <button class="btn btn-warning btn-sm"onclick="window.location.href='edit.html?id=${c._id}'">Editar</button>
+                <button class="btn btn-danger btn-sm"onclick="eliminar('${c._id}')">Eliminar</button>
               </td>
             </tr>
           `);
