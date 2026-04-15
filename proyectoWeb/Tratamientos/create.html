@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Crear Tratamiento</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+
+  <body class="container mt-4">
+    <h1 class="text-center">Registrar Tratamiento</h1>
+
+    <form id="formTratamiento">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label>Consulta</label>
+          <select id="consulta_id" class="form-control" required></select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label>Paciente</label>
+          <select id="paciente_id" class="form-control" required></select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label>Doctor</label>
+          <select id="doctor_id" class="form-control" required></select>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label>Fecha Inicio</label>
+          <input type="date" id="fecha_inicio" class="form-control" required />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label>Fecha Fin</label>
+          <input type="date" id="fecha_fin" class="form-control" required />
+        </div>
+
+        <div class="col-md-12 mb-3">
+          <label>Instrucciones</label>
+          <textarea id="instrucciones" class="form-control" required></textarea>
+        </div>
+
+        <div class="col-md-12 mb-3">
+          <label>Medicamentos</label>
+          <input
+            type="text"
+            id="medicamentos"
+            class="form-control"
+            placeholder="1|500mg|cada 8h,2|250mg|cada 12h"
+          />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="reset" class="btn btn-danger">Limpiar</button>
+    </form>
+
+    <script>
+      $(document).ready(function () {
+        cargarPacientes();
+        cargarDoctores();
+        cargarConsultas();
+
+        function cargarPacientes() {
+          $.get("http://localhost:3000/api/pacientes", function (data) {
+            let select = $("#paciente_id");
+            select.append('<option value="">Seleccione paciente</option>');
+
+            data.forEach((p) => {
+              select.append(
+                `<option value="${p._id}">
+                ${p.nombre} ${p.apellido}
+              </option>`,
+              );
+            });
+          });
+        }
+
+        function cargarDoctores() {
+          $.get("http://localhost:3000/api/doctores", function (data) {
+            let select = $("#doctor_id");
+            select.append('<option value="">Seleccione doctor</option>');
+
+            data.forEach((d) => {
+              select.append(
+                `<option value="${d._id}">
+                ${d.nombre} (${d.especialidad})
+              </option>`,
+              );
+            });
+          });
+        }
+
+        function cargarConsultas() {
+          $.get("http://localhost:3000/api/consultas", function (data) {
+            let select = $("#consulta_id");
+            select.append('<option value="">Seleccione consulta</option>');
+
+            data.forEach((c) => {
+              select.append(
+                `<option value="${c._id}">
+                ${c.diagnostico}
+              </option>`,
+              );
+            });
+          });
+        }
+
+        $("#formTratamiento").submit(function (e) {
+          e.preventDefault();
+
+          let meds = $("#medicamentos").val();
+          let medicamentos = [];
+
+          if (meds) {
+            medicamentos = meds.split(",").map((m) => {
+              let parts = m.split("|");
+              return {
+                medicamento_id: parts[0],
+                dosis: parts[1],
+                frecuencia: parts[2],
+              };
+            });
+          }
+
+          let datos = {
+            consulta_id: $("#consulta_id").val(),
+            paciente_id: $("#paciente_id").val(),
+            doctor_id: $("#doctor_id").val(),
+            fecha_inicio: $("#fecha_inicio").val(),
+            fecha_fin: $("#fecha_fin").val(),
+            instrucciones: $("#instrucciones").val(),
+            medicamentos: medicamentos,
+          };
+
+          console.log(datos);
+
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:3000/api/tratamientos",
+            data: JSON.stringify(datos),
+            contentType: "application/json",
+            success: function () {
+              alert("Tratamiento guardado correctamente");
+              $("#formTratamiento")[0].reset();
+            },
+            error: function () {
+              alert("Error al guardar tratamiento");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
