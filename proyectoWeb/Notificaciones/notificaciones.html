@@ -31,42 +31,30 @@
 
   listar();
 
-  
-  $.get("http://localhost:3000/api/usuarios", function (usuarios) {
-    usuarios.forEach(u => {
-      $("#usuario_id").append(`<option value="${u._id}">${u.correo}</option>`);
-    });
-  });
-
-  
-  $.get("http://localhost:3000/api/alertas", function (alertas) {
-    alertas.forEach(a => {
-      $("#alerta_id").append(`<option value="${a._id}">${a.nombre}</option>`);
-    });
-  });
-
-  
   function listar() {
     $.ajax({
       url: "http://localhost:3000/api/notificaciones",
       type: "GET",
       success: function (data) {
+        console.log("Notificaciones cargadas:", data);
         let tabla = $("#tabla");
         tabla.empty();
 
         if (data.length === 0) {
-          tabla.append("<tr><td colspan='6'>No hay datos</td></tr>");
+          tabla.append("<tr><td colspan='7'>No hay datos</td></tr>");
           return;
         }
 
         data.forEach(n => {
+          console.log("Procesando notificación:", n);
           let fila = `<tr>
-            <td>${n.usuario_id?.correo || ""}</td>
-            <td>${n.alerta_id?.nombre || ""}</td>
+            <td>${n.usuario_id?.correo || "Usuario desconocido"}</td>
+            <td>${n.alerta_id ? `${n.alerta_id.regla_id?.nombre || "Sin regla"} [${n.alerta_id.severidad || "sin severidad"}]` : "Alerta desconocida"}</td>
             <td>${n.mensaje}</td>
             <td>${n.leido ? "Sí" : "No"}</td>
             <td>${new Date(n.enviado).toLocaleString()}</td>
             <td>
+              <a href="edit.html?id=${n._id}" class="btn btn-warning btn-sm">Editar</a>
               <button class="btn btn-danger btn-sm" onclick="eliminar('${n._id}')">Eliminar</button>
             </td>
           </tr>`;
@@ -74,19 +62,18 @@
           tabla.append(fila);
         });
       },
-      error: function () {
-        alert("Error al cargar notificaciones");
+      error: function (error) {
+        console.error("Error al cargar notificaciones:", error);
       }
     });
   }
-cargarNotificaciones();
 
 window.eliminar = function(id) {
         $.ajax({
           url: "http://localhost:3000/api/notificaciones/" + id,
           type: "DELETE",
           success: function () {
-            listarNotificaciones();
+            listar();
           }
         });
       }

@@ -4,6 +4,7 @@ const router = express.Router();
 // Importar el modelo Doctor
 const Doctor = require('../models/Doctor');
 const Usuario = require('../models/Usuario');
+const { registrarAuditoria } = require("../utils/auditLogger");
 
 // GET: Obtener todos los doctores
 router.get("/", async (req, res) => {
@@ -60,6 +61,13 @@ router.post("/", async (req, res) => {
 
     const nuevoDoctor = new Doctor(req.body);
     const doctorGuardado = await nuevoDoctor.save();
+    await registrarAuditoria({
+      usuarioId: doctorGuardado.usuario_id,
+      accion: "CREATE",
+      coleccion: "Doctores",
+      documentoId: doctorGuardado._id,
+      detalles: `Doctor creado: ${doctorGuardado.nombre} ${doctorGuardado.apellidos}`,
+    });
 
     res.json(doctorGuardado);
 
@@ -82,6 +90,13 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ error: "Doctor no encontrado" });
     }
 
+    await registrarAuditoria({
+      usuarioId: doctorActualizado.usuario_id,
+      accion: "UPDATE",
+      coleccion: "Doctores",
+      documentoId: doctorActualizado._id,
+      detalles: `Doctor actualizado: ${doctorActualizado.nombre} ${doctorActualizado.apellidos}`,
+    });
     res.json(doctorActualizado);
   } catch (error) {
     res.status(500).json({ error: "Error al actualizar el doctor" });
@@ -97,6 +112,13 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ error: "Doctor no encontrado" });
     }
 
+    await registrarAuditoria({
+      usuarioId: doctorEliminado.usuario_id,
+      accion: "DELETE",
+      coleccion: "Doctores",
+      documentoId: doctorEliminado._id,
+      detalles: `Doctor eliminado: ${doctorEliminado.nombre} ${doctorEliminado.apellidos}`,
+    });
     res.json({ message: "Doctor eliminado", doctorEliminado });
   } catch (error) {
     res.status(500).json({ error: "Error al eliminar el doctor" });

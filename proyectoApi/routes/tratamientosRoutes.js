@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Tratamientos = require("../models/tratamientos");
+const { registrarAuditoria } = require("../utils/auditLogger");
 
 
 router.get("/", async (req, res) => {
@@ -22,6 +23,12 @@ router.post("/", async (req, res) => {
   try {
     const nuevo = new Tratamientos(req.body);
     const guardado = await nuevo.save();
+    await registrarAuditoria({
+      accion: "CREATE",
+      coleccion: "Tratamientos",
+      documentoId: guardado._id,
+      detalles: "Tratamiento creado",
+    });
     res.json(guardado);
   } catch (error) {
     res.status(400).json({
@@ -56,6 +63,14 @@ router.put("/:id", async (req, res) => {
       req.body,
       { new: true }
     );
+    if (actualizado) {
+      await registrarAuditoria({
+        accion: "UPDATE",
+        coleccion: "Tratamientos",
+        documentoId: actualizado._id,
+        detalles: "Tratamiento actualizado",
+      });
+    }
     res.json(actualizado);
   } catch (error) {
     res.status(400).json({
@@ -67,7 +82,15 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await Tratamientos.findByIdAndDelete(req.params.id);
+    const eliminado = await Tratamientos.findByIdAndDelete(req.params.id);
+    if (eliminado) {
+      await registrarAuditoria({
+        accion: "DELETE",
+        coleccion: "Tratamientos",
+        documentoId: eliminado._id,
+        detalles: "Tratamiento eliminado",
+      });
+    }
     res.json({ mensaje: "Tratamiento eliminado correctamente" });
   } catch {
     res.status(400).json({ mensaje: "Error al eliminar tratamiento" });
