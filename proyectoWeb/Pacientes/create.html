@@ -90,10 +90,7 @@
               select.append('<option value="">Seleccione un usuario</option>');
 
               data.forEach((u) => {
-                select.append(
-                  `<option value="${u._id}">
-                  ${u.correo} (${u.role})
-                </option>`,
+                select.append(`<option value="${u._id}">${u.correo} (${u.role})</option>`,
                 );
               });
             },

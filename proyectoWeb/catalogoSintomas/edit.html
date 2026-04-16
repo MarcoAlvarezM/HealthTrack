@@ -79,7 +79,7 @@ $(document).ready(function () {
     return;
   }
 
-  // 🔥 Cargar síntoma
+  // Cargar síntoma
   $.get("http://localhost:3000/api/CatalogoSintomas/" + id, function (s) {
 
     $("#id_").val(s.id_);
@@ -97,7 +97,7 @@ $(document).ready(function () {
     alert("Error al cargar síntoma");
   });
 
-  // 🔥 Actualizar
+  // Actualizar
   $("#formSintoma").submit(function(e){
     e.preventDefault();
 
@@ -139,7 +139,7 @@ $(document).ready(function () {
       contentType: "application/json",
       success: function(){
         alert("Síntoma actualizado");
-        window.location.href = "catalogo-sintomas.html";
+        window.location.href = "catalogoSintomas.html";
       },
       error: function(){
         alert("Error al actualizar");
