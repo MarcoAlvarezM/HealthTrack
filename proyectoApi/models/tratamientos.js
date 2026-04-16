@@ -1,53 +1,54 @@
 const mongoose = require("mongoose");
 
 const TratamientoSchema = new mongoose.Schema({
-
-  consulta_id: {
-    type: Number,
-    required: true
-  },
-
   paciente_id: {
-    type: Number,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pacientes",
+    required: true,
   },
 
   doctor_id: {
-    type: Number,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doctor",
+    required: true,
   },
 
+  consulta_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Consulta",
+    required: true,
+  },
   fecha_inicio: {
     type: Date,
-    required: true
+    required: true,
   },
 
   fecha_fin: {
     type: Date,
-    required: true
+    required: true,
   },
 
   instrucciones: {
     type: String,
-    required: true
+    required: true,
   },
 
   medicamentos: [
     {
       medicamento_id: {
         type: Number,
-        required: true
+        required: true,
       },
       dosis: {
         type: String,
-        required: true
+        required: true,
       },
       frecuencia: {
         type: String,
-        required: true
-      }
-    }
-  ]
+        required: true,
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model("Tratamientos", TratamientoSchema);

@@ -6,7 +6,10 @@ const Alertas = require("../models/Alertas");
 // Obtener todas
 router.get("/", async (req, res) => {
   try {
-    const alertas = await Alertas.find();
+    const alertas = await Alertas.find()
+      .populate("paciente_id")
+      .populate("doctor_id")
+      .populate("regla_id");
     res.json(alertas);
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener alertas" });
@@ -16,17 +19,19 @@ router.get("/", async (req, res) => {
 // Obtener una por ID
 router.get("/:id", async (req, res) => {
   try {
-    const alerta = await Alertas.findById(req.params.id);
+    const alerta = await Alertas.findById(req.params.id)
+      .populate("paciente_id")
+      .populate("doctor_id")
+      .populate("regla_id");
     res.json(alerta);
   } catch (error) {
     res.status(400).json({ mensaje: "Error al obtener alerta" });
   }
 });
 
-
 router.post("/", async (req, res) => {
   try {
-    // Normalizar severidad 
+    // Normalizar severidad
     if (req.body.severidad) {
       req.body.severidad = req.body.severidad.toLowerCase();
     }
@@ -39,13 +44,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 router.put("/:id", async (req, res) => {
   try {
     const actualizada = await Alertas.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { returnDocument: 'after' }
     );
     res.json(actualizada);
   } catch (error) {
@@ -56,7 +60,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await Alertas.findByIdAndUpdate(req.params.id, {
-      activo: false
+      activo: false,
     });
     res.json({ mensaje: "Alerta desactivada" });
   } catch (error) {

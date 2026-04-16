@@ -1,56 +1,50 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const alertaSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true
-  },
-
   paciente_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pacientes",
     required: true,
-    ref: 'Pacientes'
   },
 
   doctor_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doctor",
     required: true,
-    ref: 'Doctor'
   },
 
   regla_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ReglasAlertas",
     required: true,
-    ref: 'ReglasAlertas'
   },
 
   activadoEn: {
     type: Date,
-    required: true
+    required: true,
   },
 
   severidad: {
     type: String,
-    enum: ['baja', 'media', 'alta', 'Alta'], 
-    required: true
+    enum: ["baja", "media", "alta", "Alta"],
+    required: true,
   },
 
   mensaje: {
     type: String,
-    required: true
+    required: true,
   },
 
   estado: {
     type: String,
-    enum: ['pendiente', 'atendida', 'cancelada'],
-    default: 'pendiente'
+    enum: ["pendiente", "atendida", "cancelada"],
+    default: "pendiente",
   },
 
   activo: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
-module.exports = mongoose.model('Alertas', alertaSchema, 'Alertas');
+module.exports = mongoose.model("Alertas", alertaSchema, "Alertas");
