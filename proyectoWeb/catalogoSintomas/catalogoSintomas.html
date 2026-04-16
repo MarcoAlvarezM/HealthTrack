@@ -54,7 +54,7 @@ $(document).ready(function(){
             <td>${escala}</td>
             <td>${s.umbralAlerta || "-"}</td>
             <td>
-              <button class="btn btn-warning btn-sm"onclick="window.location.href='edit.html?id=${s.id_}'">Editar</button>
+              <button class="btn btn-warning btn-sm"onclick="window.location.href='edit.html?id=${s._id}'">Editar</button>
               <button class="btn btn-danger btn-sm"onclick="eliminar('${s._id}')">Eliminar</button>
             </td>
           </tr>

@@ -37,7 +37,7 @@
 
         function listar() {
           $.ajax({
-            url: "http://localhost:3000/api/reportesDiarios",
+            url: "http://localhost:3000/api/reportes-diarios",
             type: "GET",
             success: function (data) {
               let tabla = $("#tablaReportesDiarios");
@@ -55,9 +55,22 @@
                 let pacienteNombre = r.pacienteId
                   ? r.pacienteId.nombre + " " + r.pacienteId.apellido
                   : "N/A";
-                let tratamientoNombre = r.planTratamientoId
-                  ? r.planTratamientoId.nombre
-                  : "N/A";
+                let tratamientoNombre = "N/A";
+
+                if (r.planTratamientoId) {
+                  let diagnostico =
+                    r.planTratamientoId.consulta_id?.diagnostico ||
+                    r.planTratamientoId.consulta_id?._id ||
+                    "Tratamiento";
+                  let inicio = r.planTratamientoId.fecha_inicio
+                    ? new Date(r.planTratamientoId.fecha_inicio).toLocaleDateString("es-ES")
+                    : "Sin fecha";
+                  let fin = r.planTratamientoId.fecha_fin
+                    ? new Date(r.planTratamientoId.fecha_fin).toLocaleDateString("es-ES")
+                    : "Sin fecha";
+
+                  tratamientoNombre = `${diagnostico} (${inicio} a ${fin})`;
+                }
 
                 tabla.append(`
             <tr>
@@ -102,7 +115,7 @@
           if (!confirm("¿Seguro que deseas eliminar el reporte diario?")) return;
 
           $.ajax({
-            url: "http://localhost:3000/api/reportesDiarios/" + id,
+            url: "http://localhost:3000/api/reportes-diarios/" + id,
             type: "DELETE",
             success: function () {
               listar();

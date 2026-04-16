@@ -26,6 +26,23 @@ router.get("/paciente/:pacienteId", async (req, res) => {
   }
 });
 
+//Obtener un reporte por ID
+router.get("/:id", async (req, res) => {
+  try {
+    const reporte = await ReportesDiarios.findById(req.params.id)
+      .populate("pacienteId")
+      .populate("planTratamientoId");
+
+    if (!reporte) {
+      return res.status(404).json({error: "Reporte no encontrado"});
+    }
+
+    res.json(reporte);
+  } catch (error) {
+    res.status(500).json({error: "Error al obtener el reporte"});
+  }
+});
+
 //Crear un nuevo reporte diario
 router.post("/", async (req, res) => {
   try {

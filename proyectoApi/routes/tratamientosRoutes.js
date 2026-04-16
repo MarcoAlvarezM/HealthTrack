@@ -6,25 +6,11 @@ const Tratamientos = require("../models/tratamientos");
 
 router.get("/", async (req, res) => {
   try {
-    const datos = await Tratamientos.aggregate([
-      {
-        $lookup: {
-          from: "pacientes",
-          localField: "paciente_id",
-          foreignField: "_id",
-          as: "paciente"
-        }
-      },
-      { $unwind: "$paciente" },
-      {
-        $lookup: {
-          from: "medicamentos",
-          localField: "medicamentos.medicamento_id",
-          foreignField: "_id",
-          as: "medicamentos_info"
-        }
-      }
-    ]);
+    const datos = await Tratamientos.find()
+      .populate("consulta_id")
+      .populate("paciente_id")
+      .populate("doctor_id")
+      .populate("medicamentos.medicamento_id");
 
     res.json(datos);
   } catch (error) {
@@ -37,8 +23,29 @@ router.post("/", async (req, res) => {
     const nuevo = new Tratamientos(req.body);
     const guardado = await nuevo.save();
     res.json(guardado);
-  } catch {
-    res.status(400).json({ mensaje: "Error al guardar tratamiento" });
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "Error al guardar tratamiento",
+      detalle: error.message,
+    });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const tratamiento = await Tratamientos.findById(req.params.id)
+      .populate("consulta_id")
+      .populate("paciente_id")
+      .populate("doctor_id")
+      .populate("medicamentos.medicamento_id");
+
+    if (!tratamiento) {
+      return res.status(404).json({ mensaje: "Tratamiento no encontrado" });
+    }
+
+    res.json(tratamiento);
+  } catch (error) {
+    res.status(400).json({ mensaje: "Error al obtener tratamiento" });
   }
 });
 
@@ -50,8 +57,11 @@ router.put("/:id", async (req, res) => {
       { new: true }
     );
     res.json(actualizado);
-  } catch {
-    res.status(400).json({ mensaje: "Error al actualizar tratamiento" });
+  } catch (error) {
+    res.status(400).json({
+      mensaje: "Error al actualizar tratamiento",
+      detalle: error.message,
+    });
   }
 });
 

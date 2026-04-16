@@ -63,7 +63,7 @@
 </div>
 
 <button class="btn btn-primary">Actualizar</button>
-<a href="catalogo-sintomas.html" class="btn btn-secondary">Cancelar</a>
+<a href="catalogoSintomas.html" class="btn btn-secondary">Cancelar</a>
 
 </form>
 
@@ -75,7 +75,7 @@ $(document).ready(function () {
 
   if (!id) {
     alert("ID no proporcionado");
-    window.location.href = "catalogo-sintomas.html";
+    window.location.href = "catalogoSintomas.html";
     return;
   }
 
@@ -139,7 +139,7 @@ $(document).ready(function () {
       contentType: "application/json",
       success: function(){
         alert("Síntoma actualizado");
-        window.location.href = "catalogo-sintomas.html";
+        window.location.href = "catalogoSintomas.html";
       },
       error: function(){
         alert("Error al actualizar");

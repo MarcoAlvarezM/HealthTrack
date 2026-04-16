@@ -142,7 +142,7 @@
 
         // Cargar datos de la regla
         $.ajax({
-          url: "http://localhost:3000/api/reglasAlertas/" + id,
+          url: "http://localhost:3000/api/reglas-alertas/" + id,
           type: "GET",
           success: function (r) {
             $("#nombre").val(r.nombre);
@@ -192,7 +192,7 @@
           console.log("Datos enviados:", datos);
 
           $.ajax({
-            url: "http://localhost:3000/api/reglasAlertas/" + id,
+            url: "http://localhost:3000/api/reglas-alertas/" + id,
             type: "PUT",
             data: JSON.stringify(datos),
             contentType: "application/json",

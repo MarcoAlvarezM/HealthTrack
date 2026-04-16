@@ -46,20 +46,25 @@
 
               if (data.length === 0) {
                 tabla.append(
-                  "<tr><td colspan='7'>No hay medicamentos registradas</td></tr>",
+                  "<tr><td colspan='6'>No hay medicamentos registrados</td></tr>",
                 );
                 return;
               }
 
               data.forEach((m) => {
+                const efectosSecundarios = Array.isArray(m.efectosSecundarios)
+                  ? m.efectosSecundarios.join(", ")
+                  : (m.efectosSecundarios || "");
+
                 tabla.append(`
             <tr>
               <td>${m.nombre}</td>
               <td>${m.categoria}</td>
               <td>${m.dosisRecomendada}</td>
-              <td>${m.efectosSecundarios}</td>
+              <td>${efectosSecundarios}</td>
               <td>${m.requierePrescripcion ? "Sí" : "No"}</td>
               <td>
+                  <button class="btn btn-warning btn-sm" onclick="window.location.href='edit.html?id=${m._id}'">Editar</button>
                   <button class="btn btn-danger btn-sm" onclick="eliminar('${m._id}')">Eliminar</button>
               </td>
             </tr>

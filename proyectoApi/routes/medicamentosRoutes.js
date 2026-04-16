@@ -9,6 +9,21 @@ router.get("/", async (req, res) => {
   res.json(datos);
 });
 
+// Obtener uno por ID
+router.get("/:id", async (req, res) => {
+  try {
+    const medicamento = await Medicamentos.findById(req.params.id);
+
+    if (!medicamento) {
+      return res.status(404).json({ mensaje: "Medicamento no encontrado" });
+    }
+
+    res.json(medicamento);
+  } catch {
+    res.status(400).json({ mensaje: "Error al obtener medicamento" });
+  }
+});
+
 // Crear
 router.post("/", async (req, res) => {
   const nuevo = new Medicamentos(req.body);

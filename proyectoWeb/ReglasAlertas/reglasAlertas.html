@@ -38,7 +38,7 @@
 
         function listar() {
           $.ajax({
-            url: "http://localhost:3000/api/reglasAlertas",
+            url: "http://localhost:3000/api/reglas-alertas",
             type: "GET",
             success: function (data) {
               let tabla = $("#tablaReglasAlertas");
@@ -99,7 +99,7 @@
           if (!confirm("¿Seguro que deseas eliminar la regla de alerta?")) return;
 
           $.ajax({
-            url: "http://localhost:3000/api/reglasAlertas/" + id,
+            url: "http://localhost:3000/api/reglas-alertas/" + id,
             type: "DELETE",
             success: function () {
               listar();
