@@ -3,6 +3,24 @@ const router = express.Router();
 
 const Pacientes = require("../models/pacientes");
 
+// Obtener uno por ID
+router.get("/:id", async (req, res) => {
+  try {
+    const paciente = await Pacientes.findById(req.params.id)
+      .populate('usuario_id', 'correo role');
+
+    if (!paciente) {
+      return res.status(404).json({ mensaje: "Paciente no encontrado" });
+    }
+
+    res.json(paciente);
+
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ mensaje: "Error al obtener paciente" });
+  }
+});
+
 // Obtener todos
 router.get("/", async (req, res) => {
   try {

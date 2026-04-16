@@ -109,7 +109,7 @@ $(document).ready(function () {
       url: "http://localhost:3000/api/doctores",
       data: JSON.stringify(datos),
       contentType: "application/json",
-      success: function () {
+      success: function (response) {
          console.log(response);
         alert("Doctor guardado");
         $("#formDoctor")[0].reset();

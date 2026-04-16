@@ -85,7 +85,7 @@
         $.get("http://localhost:3000/api/usuarios", function (usuarios) {
           usuarios.forEach((u) => {
             $("#usuario_id").append(
-              <option value="${u._id}">${u.correo}</option>,
+              `<option value="${u._id}">${u.correo}</option>`,
             );
           });
 

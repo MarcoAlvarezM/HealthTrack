@@ -140,29 +140,6 @@
 
   </div>
 
-  <!-- SCRIPT -->
-  <script type="module">
-    import { getData } from "./js/app.js";
-
-    async function cargarUsuarios() {
-      const data = await getData("usuarios");
-
-      const tabla = document.getElementById("tablaUsuarios");
-      tabla.innerHTML = "";
-
-      data.forEach(u => {
-        tabla.innerHTML += `
-          <tr>
-            <td>${u.correo}</td>
-            <td>${u.role}</td>
-          </tr>
-        `;
-      });
-    }
-
-    cargarUsuarios();
-  </script>
-
 </body>
 
 </html>
