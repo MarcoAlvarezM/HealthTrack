@@ -5,7 +5,28 @@ const Registros = require("../models/Registros");
 //Obtener todos los registros
 router.get("/", async (req, res) => {
   try {
-    const logs = await Registros.find()
+    const filtros = {};
+
+    if (req.query.accion) {
+      filtros.accion = req.query.accion;
+    }
+
+    if (req.query.coleccion) {
+      filtros.coleccion = req.query.coleccion;
+    }
+
+    if (req.query.fecha) {
+      const inicio = new Date(req.query.fecha);
+      const fin = new Date(req.query.fecha);
+      fin.setDate(fin.getDate() + 1);
+
+      filtros.marca_temporal = {
+        $gte: inicio,
+        $lt: fin,
+      };
+    }
+
+    const logs = await Registros.find(filtros)
       .populate("usuarioId")
       .sort({marca_temporal: -1});
     res.json(logs);
@@ -47,6 +68,21 @@ router.get("/accion/:accion", async (req, res) => {
     res.json(logs);
   } catch (error) {
     res.status(500).json({error: "Error al obtener los registros por acción"});
+  }
+});
+
+//Obtener un registro por ID
+router.get("/:id", async (req, res) => {
+  try {
+    const log = await Registros.findById(req.params.id).populate("usuarioId");
+
+    if (!log) {
+      return res.status(404).json({error: "Registro no encontrado"});
+    }
+
+    res.json(log);
+  } catch (error) {
+    res.status(500).json({error: "Error al obtener el registro"});
   }
 });
 

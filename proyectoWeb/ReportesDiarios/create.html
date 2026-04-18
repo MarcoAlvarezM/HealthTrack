@@ -111,9 +111,18 @@
         // Cargar fecha actual
         let hoy = new Date().toISOString().split("T")[0];
         $("#fecha").val(hoy);
+        $("#medicamentoTomado").prop("required", false);
+        $("#sintomas")
+          .closest(".col-md-12")
+          .html(`
+            <label class="form-label">Síntomas</label>
+            <div id="camposSintomas" class="row g-3"></div>
+            <small class="text-muted">Los campos se cargan desde el catálogo de síntomas.</small>
+          `);
 
         cargarPacientes();
         cargarTratamientos();
+        cargarCamposSintomas();
 
         function cargarPacientes() {
           $.ajax({
@@ -146,13 +155,88 @@
               select.append('<option value="">Seleccione un tratamiento</option>');
 
               data.forEach((t) => {
+                let pacienteNombre = t.paciente_id
+                  ? `${t.paciente_id.nombre || ""} ${t.paciente_id.apellido || ""}`.trim()
+                  : "Paciente sin nombre";
+                let consultaTexto = t.consulta_id?.diagnostico || t.consulta_id?._id || "Consulta";
+                let inicio = t.fecha_inicio
+                  ? new Date(t.fecha_inicio).toLocaleDateString("es-ES")
+                  : "Sin fecha";
+                let fin = t.fecha_fin
+                  ? new Date(t.fecha_fin).toLocaleDateString("es-ES")
+                  : "Sin fecha";
+
                 select.append(
-                  `<option value="${t._id}">${t.nombre}</option>`,
+                  `<option value="${t._id}">${pacienteNombre} - ${consultaTexto} (${inicio} a ${fin})</option>`,
                 );
               });
             },
             error: function () {
               alert("Error al cargar tratamientos");
+            },
+          });
+        }
+
+        function cargarCamposSintomas() {
+          $.ajax({
+            url: "http://localhost:3000/api/catalogosintomas",
+            type: "GET",
+            success: function (data) {
+              let contenedor = $("#camposSintomas");
+              contenedor.empty();
+
+              if (!data || data.length === 0) {
+                contenedor.append(
+                  '<div class="col-12"><div class="alert alert-warning mb-0">No hay síntomas configurados en el catálogo.</div></div>',
+                );
+                return;
+              }
+
+              data.forEach((s) => {
+                if (s.tipo === "booleano") {
+                  contenedor.append(`
+                    <div class="col-md-6 sintoma-item" data-nombre="${s.nombre}" data-tipo="${s.tipo}">
+                      <div class="form-check form-switch mt-4">
+                        <input class="form-check-input sintoma-valor" type="checkbox" id="sintoma_${s._id}">
+                        <label class="form-check-label" for="sintoma_${s._id}">${s.etiqueta}</label>
+                      </div>
+                    </div>
+                  `);
+                  return;
+                }
+
+                if (s.tipo === "escala") {
+                  contenedor.append(`
+                    <div class="col-md-6 sintoma-item" data-nombre="${s.nombre}" data-tipo="${s.tipo}">
+                      <label for="sintoma_${s._id}" class="form-label">${s.etiqueta}</label>
+                      <input
+                        type="number"
+                        id="sintoma_${s._id}"
+                        class="form-control sintoma-valor"
+                        min="${s.escalaMinima ?? ""}"
+                        max="${s.escalaMaxima ?? ""}"
+                        placeholder="${s.escalaMinima ?? ""} - ${s.escalaMaxima ?? ""}"
+                      />
+                    </div>
+                  `);
+                  return;
+                }
+
+                contenedor.append(`
+                  <div class="col-md-6 sintoma-item" data-nombre="${s.nombre}" data-tipo="${s.tipo}">
+                    <label for="sintoma_${s._id}" class="form-label">${s.etiqueta}</label>
+                    <input
+                      type="text"
+                      id="sintoma_${s._id}"
+                      class="form-control sintoma-valor"
+                      placeholder="Ingrese un valor"
+                    />
+                  </div>
+                `);
+              });
+            },
+            error: function () {
+              alert("Error al cargar el catálogo de síntomas");
             },
           });
         }
@@ -197,7 +281,71 @@
 
           $.ajax({
             type: "POST",
-            url: "http://localhost:3000/api/reportesDiarios",
+            url: "http://localhost:3000/api/reportes-diarios",
+            data: JSON.stringify(datos),
+            contentType: "application/json",
+            success: function (response) {
+              console.log(response);
+              alert("Reporte diario creado correctamente");
+              window.location.href = "reportesDiarios.html";
+            },
+            error: function (xhr) {
+              console.error(xhr);
+              alert(
+                "Error al guardar el reporte: " + (xhr.responseJSON?.message || xhr.statusText),
+              );
+            },
+          });
+        });
+
+        $("#formReporteDiario").off("submit").on("submit", function (e) {
+          e.preventDefault();
+
+          let sintomas = {};
+
+          $("#camposSintomas .sintoma-item").each(function () {
+            const nombre = $(this).data("nombre");
+            const tipo = $(this).data("tipo");
+            const campo = $(this).find(".sintoma-valor");
+
+            if (tipo === "booleano") {
+              sintomas[nombre] = campo.is(":checked");
+              return;
+            }
+
+            const valor = campo.val();
+            if (valor === "") {
+              return;
+            }
+
+            sintomas[nombre] = tipo === "escala" ? Number(valor) : valor;
+          });
+
+          let datos = {
+            pacienteId: $("#pacienteId").val(),
+            planTratamientoId: $("#planTratamientoId").val(),
+            fecha: $("#fecha").val(),
+            medicamentoTomado: $("#medicamentoTomado").is(":checked"),
+            sintomas: sintomas,
+            estado: $("#estado").val(),
+            notas: $("#notas").val(),
+          };
+
+          if (
+            !datos.pacienteId ||
+            !datos.planTratamientoId ||
+            !datos.fecha ||
+            !datos.estado
+          ) {
+            alert("Faltan datos requeridos");
+            return;
+          }
+
+          console.log("Datos enviados:", datos);
+
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:3000/api/reportes-diarios",
             data: JSON.stringify(datos),
             contentType: "application/json",
             success: function (response) {

@@ -9,7 +9,7 @@ const notificacionSchema = new mongoose.Schema({
 
   alerta_id: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Alerta', 
+    ref: 'Alertas', 
     required: true 
   },
 

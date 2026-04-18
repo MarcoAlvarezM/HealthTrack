@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Crear Tratamiento</title>
+    <title>Editar Tratamiento</title>
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -12,7 +12,7 @@
   </head>
 
   <body class="container mt-4">
-    <h1 class="text-center">Registrar Tratamiento</h1>
+    <h1 class="text-center">Editar Tratamiento</h1>
 
     <form id="formTratamiento">
       <div class="row">
@@ -62,20 +62,34 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary">Guardar</button>
-      <button type="reset" class="btn btn-danger">Limpiar</button>
+      <button type="submit" class="btn btn-primary">Actualizar</button>
+      <a href="tratamientos.html" class="btn btn-secondary">Cancelar</a>
     </form>
 
     <script>
       $(document).ready(function () {
-        cargarPacientes();
-        cargarDoctores();
-        cargarConsultas();
-        cargarMedicamentos();
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+          alert("ID no proporcionado");
+          window.location.href = "tratamientos.html";
+          return;
+        }
+
+        $.when(
+          cargarPacientes(),
+          cargarDoctores(),
+          cargarConsultas(),
+          cargarMedicamentos(),
+        ).done(function () {
+          cargarTratamiento();
+        });
 
         function cargarPacientes() {
-          $.get("http://localhost:3000/api/pacientes", function (data) {
+          return $.get("http://localhost:3000/api/pacientes", function (data) {
             let select = $("#paciente_id");
+            select.empty();
             select.append('<option value="">Seleccione paciente</option>');
 
             data.forEach((p) => {
@@ -89,8 +103,9 @@
         }
 
         function cargarDoctores() {
-          $.get("http://localhost:3000/api/doctores", function (data) {
+          return $.get("http://localhost:3000/api/doctores", function (data) {
             let select = $("#doctor_id");
+            select.empty();
             select.append('<option value="">Seleccione doctor</option>');
 
             data.forEach((d) => {
@@ -103,9 +118,26 @@
           });
         }
 
+        function cargarConsultas() {
+          return $.get("http://localhost:3000/api/consultas", function (data) {
+            let select = $("#consulta_id");
+            select.empty();
+            select.append('<option value="">Seleccione consulta</option>');
+
+            data.forEach((c) => {
+              select.append(
+                `<option value="${c._id}">
+                ${c.diagnostico}
+              </option>`,
+              );
+            });
+          });
+        }
+
         function cargarMedicamentos() {
-          $.get("http://localhost:3000/api/medicamentos", function (data) {
+          return $.get("http://localhost:3000/api/medicamentos", function (data) {
             let select = $("#medicamento_id");
+            select.empty();
             select.append('<option value="">Seleccione medicamento</option>');
 
             data.forEach((m) => {
@@ -118,18 +150,31 @@
           });
         }
 
-        function cargarConsultas() {
-          $.get("http://localhost:3000/api/consultas", function (data) {
-            let select = $("#consulta_id");
-            select.append('<option value="">Seleccione consulta</option>');
+        function cargarTratamiento() {
+          $.ajax({
+            url: "http://localhost:3000/api/tratamientos/" + id,
+            type: "GET",
+            success: function (t) {
+              $("#consulta_id").val(t.consulta_id?._id || t.consulta_id || "");
+              $("#paciente_id").val(t.paciente_id?._id || t.paciente_id || "");
+              $("#doctor_id").val(t.doctor_id?._id || t.doctor_id || "");
+              $("#fecha_inicio").val(t.fecha_inicio?.split("T")[0] || "");
+              $("#fecha_fin").val(t.fecha_fin?.split("T")[0] || "");
+              $("#instrucciones").val(t.instrucciones || "");
 
-            data.forEach((c) => {
-              select.append(
-                `<option value="${c._id}">
-                ${c.diagnostico}
-              </option>`,
-              );
-            });
+              const medicamento = (t.medicamentos || [])[0];
+              if (medicamento) {
+                $("#medicamento_id").val(
+                  medicamento.medicamento_id?._id || medicamento.medicamento_id || "",
+                );
+                $("#dosis").val(medicamento.dosis || "");
+                $("#frecuencia").val(medicamento.frecuencia || "");
+              }
+            },
+            error: function () {
+              alert("Error al cargar tratamiento");
+              window.location.href = "tratamientos.html";
+            },
           });
         }
 
@@ -165,22 +210,20 @@
             medicamentos: medicamentos,
           };
 
-          console.log(datos);
-
           $.ajax({
-            type: "POST",
-            url: "http://localhost:3000/api/tratamientos",
+            type: "PUT",
+            url: "http://localhost:3000/api/tratamientos/" + id,
             data: JSON.stringify(datos),
             contentType: "application/json",
             success: function () {
-              alert("Tratamiento guardado correctamente");
-              $("#formTratamiento")[0].reset();
+              alert("Tratamiento actualizado correctamente");
+              window.location.href = "tratamientos.html";
             },
             error: function (xhr) {
               const mensaje =
                 xhr.responseJSON?.detalle ||
                 xhr.responseJSON?.mensaje ||
-                "Error al guardar tratamiento";
+                "Error al actualizar tratamiento";
               alert(mensaje);
             },
           });

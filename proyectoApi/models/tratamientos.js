@@ -36,7 +36,8 @@ const TratamientoSchema = new mongoose.Schema({
   medicamentos: [
     {
       medicamento_id: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Medicamentos",
         required: true,
       },
       dosis: {

@@ -75,6 +75,7 @@ $(document).ready(function () {
             <td>${t.instrucciones || ""}</td>
             <td>${meds || "Sin medicamentos"}</td>
             <td>
+              <button class="btn btn-warning btn-sm" onclick="window.location.href='edit.html?id=${t._id}'">Editar</button>
               <button class="btn btn-danger btn-sm" onclick="eliminar('${t._id}')">Eliminar</button>
             </td>
           </tr>`;
